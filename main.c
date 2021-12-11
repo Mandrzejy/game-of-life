@@ -1,72 +1,76 @@
 #include<stdio.h>
 #include<stdlib.h>
 #define WIDTH 30
-#define HEIGHT 40
+#define HEIGHT 20
 
 #define PRINT_BLOCK printf("\033[0;37m\u2588\u2588")
 #define PRINT_SPACE printf("\033[0;30m\u2588\u2588");
 #define CLS printf("\033[H\033[J")
+#define NEWLINE printf("\n")
+#define ROW_SIZE WIDTH+2
+
+#define index(x,y,row_size) (y)*(row_size)+x
+int grid[(HEIGHT+2)*(WIDTH+2)];
+
+int next[(HEIGHT+2)*(WIDTH+2)];
 
 
-void copy(int what[WIDTH+2][HEIGHT+2],int where[WIDTH+2][HEIGHT+2]){
-	for(int y=0;y<HEIGHT+2;y++){
-		for(int x=0;x<WIDTH+2;x++){
-			where[y][x]=what[y][x];
-	
+void copy(){
+	for(int y=1;y<HEIGHT+1;y++){
+		for(int x=1;x<WIDTH+1;x++){
+			grid[index(x,y,WIDTH+2)]=next[index(x,y,WIDTH+2)];
 		}
 	}
-	
 }
-int grid[WIDTH+2][HEIGHT+2];
-int _next_gen[WIDTH+2][HEIGHT+2];
+
+
 void print_grid(){
-	CLS;	
+	CLS;
 	for(int y=1;y<HEIGHT+1;y++){
 		for(int x=1;x<WIDTH+1;x++){
-			grid[y][x]==1?PRINT_BLOCK:PRINT_SPACE;
+			grid[index(x,y,WIDTH+2)]?PRINT_BLOCK:PRINT_SPACE;	
 		}
-		printf("\n");
+		NEWLINE;
 	}
 }
-
-
-void next_gen(){
+void compute_next(){
 	for(int y=1;y<HEIGHT+1;y++){
 		for(int x=1;x<WIDTH+1;x++){
-			//where
-			int n=grid[y][x-1]+grid[y][x+1]+ \
-			      grid[y-1][x]+grid[y-1][x-1]+grid[y-1][x+1]+\
-			      grid[y+1][x]+grid[y+1][x-1]+grid[y+1][x+1];
+			int n=0;
+			n= grid[index(x-1,y,ROW_SIZE)]+grid[index(x+1,y,ROW_SIZE)] \
+			     + grid[index(x-1,y-1,ROW_SIZE)]+grid[index(x,y-1,ROW_SIZE)]+grid[index(x+1,y-1,ROW_SIZE)] \
+			     + grid[index(x-1,y+1,ROW_SIZE)]+grid[index(x,y+1,ROW_SIZE)]+grid[index(x+1,y+1,ROW_SIZE)];
+			
+			if(n==3 || n==2){
+				if(grid[index(x,y,ROW_SIZE)]==0){if(n==3){next[index(x,y,ROW_SIZE)]=1;}else{next[index(x,y,ROW_SIZE)]=0;}}
+				else{next[index(x,y,ROW_SIZE)]=1;}
+			}
+			else{
+				next[index(x,y,ROW_SIZE)]=0;
+			}		
 
-
-				if(n==3 || n==2){
-					if(grid[y][x]==0){if(n==3){_next_gen[y][x]=1;}else{_next_gen[y][x]=0;}}
-					else{_next_gen[y][x]=1;}
-
-				}
-				else{
-					_next_gen[y][x]=0;
-				}
 		}
 
 
 	}
-	copy(_next_gen,grid);
+	copy();
+
 }
 
 int main(){	
 	
-	grid[10][3]=1;
-	grid[10][4]=1;
-	grid[10][5]=1;
-	grid[12][4]=1;
+	grid[index(3,10,WIDTH+2)]=1;
+	grid[index(4,10,WIDTH+2)]=1;
+	grid[index(5,10,WIDTH+2)]=1;
+	grid[index(4,12,WIDTH+2)]=1;
 	
 
 	
 	char c;
 	while(1){
 		print_grid();
-		next_gen();
+		compute_next();
+		
 		while((c=getchar())!='\n'){if(c=='q'){exit(0);}};	
 	}
 
