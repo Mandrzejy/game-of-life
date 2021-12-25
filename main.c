@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
-#define WIDTH 30
-#define HEIGHT 20
+#define WIDTH 75
+#define HEIGHT 40
 
 #define PRINT_BLOCK printf("\033[0;37m\u2588\u2588")
 #define PRINT_SPACE printf("\033[0;30m\u2588\u2588");
@@ -58,13 +58,29 @@ void compute_next(){
 }
 
 int main(){	
-	
+	#if 0	
 	grid[index(3,10,WIDTH+2)]=1;
 	grid[index(4,10,WIDTH+2)]=1;
 	grid[index(5,10,WIDTH+2)]=1;
 	grid[index(4,12,WIDTH+2)]=1;
-	
+	#endif
+	#if 1
+	grid[index(5,5,ROW_SIZE)]=1;
+	grid[index(6,6,ROW_SIZE)]=1;
+	grid[index(7,6,ROW_SIZE)]=1;
+	grid[index(7,5,ROW_SIZE)]=1;
+	grid[index(7,4,ROW_SIZE)]=1;
+	#endif
+	#if 0
+	srand(112137829);
+	for(int y=1;y<HEIGHT+1;y++){
+		for(int x=1;x<WIDTH+1;x++){
+			grid[index(x,y,ROW_SIZE)]=rand()%2;
+		}
+	}
 
+
+	#endif
 	
 	char c;
 	while(1){
